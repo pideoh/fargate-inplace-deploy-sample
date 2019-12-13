@@ -1,0 +1,36 @@
+version: 0.2
+ 
+phases:
+  install:
+    runtime-versions:
+      docker: 18
+      java: corretto11
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - export VERSION=`date '+%Y%m%d%H%M%S'`
+      - $(aws ecr get-login --no-include-email)
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the SpringBoot Application...
+      - ./gradlew build
+      - echo Building the Docker image...
+      - docker build -t ${REGISTORY_URI}:latest -f Dockerfile .
+      - docker tag ${REGISTORY_URI}:latest ${REGISTORY_URI}:${VERSION}
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push ${REGISTORY_URI}:latest
+      - docker push ${REGISTORY_URI}:${VERSION}
+      - echo Writing image definitions file...
+      - printf '[{"name":"api","imageUri":"%s"}]' ${REGISTORY_URI}:${VERSION} > imagedefinitions.json
+artifacts:
+  files: 
+    - imagedefinitions.json
+cache:
+  paths:
+    - '/root/.gradle/caches/**/*'
+    - '/root/.gradle/wrapper/**/*'
+    - '.gradle/**/*'
