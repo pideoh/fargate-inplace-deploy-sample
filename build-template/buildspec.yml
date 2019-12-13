@@ -16,7 +16,7 @@ phases:
       - echo Building the SpringBoot Application...
       - ./gradlew build
       - echo Building the Docker image...
-      - docker build -t ${REGISTORY_URI}:latest -f Dockerfile .
+      - docker build -t ${REGISTORY_URI}:latest -f build-template/Dockerfile .
       - docker tag ${REGISTORY_URI}:latest ${REGISTORY_URI}:${VERSION}
   post_build:
     commands:
