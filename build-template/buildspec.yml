@@ -25,7 +25,7 @@ phases:
       - docker push ${REGISTORY_URI}:latest
       - docker push ${REGISTORY_URI}:${VERSION}
       - echo Writing image definitions file...
-      - printf '[{"name":"api","imageUri":"%s"}]' ${REGISTORY_URI}:${VERSION} > imagedefinitions.json
+      - printf '[{"name":"sample-api","imageUri":"%s"}]' ${REGISTORY_URI}:${VERSION} > imagedefinitions.json
 artifacts:
   files: 
     - imagedefinitions.json
